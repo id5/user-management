@@ -49,6 +49,24 @@ use webvimark\extensions\BootstrapSwitch\BootstrapSwitch;
 
 	<?php endif; ?>
 
+    <div class="form-group">
+		<label class="control-label col-sm-3" id="password" for="token">Access Token</label>
+		<div class="col-sm-6">                       
+        	<input type="password" size="20" class="form-control" id="token" readonly="true" value="<?=$model->access_token ?>">
+
+        </div>
+	</div>
+
+	<div class="form-group">
+        <div class="col-sm-6 col-sm-offset-3">
+        	<div class="checkbox">
+	            <label for="show">
+		            <input id="show" type="checkbox">
+	                <?=Yii::t('app','Show Token') ?>
+	            </label>
+        	</div>
+        </div>
+    </div>
 
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-9">
@@ -71,3 +89,45 @@ use webvimark\extensions\BootstrapSwitch\BootstrapSwitch;
 </div>
 
 <?php BootstrapSwitch::widget() ?>
+
+
+<?php  
+
+$this->registerJs('
+
+    $(\'#generate\').click(function(){
+        event.preventDefault();
+        if (confirm(\'Deseja gerar um novo Token?\')) {
+            $.ajax
+            ({ 
+                data: {"userId": '.$model->id.'},
+                url: \''.Url::toRoute(['user/generate-access-token']).'\',
+                type: \'GET\',
+                success: function(result)
+                {
+                    return true;
+                }
+            });
+        }
+    });        
+
+    $(\'#copy\').click(function(){
+        event.preventDefault();
+        var $temp = $("<input>");
+        $("body").append($temp);
+        $temp.val($("#token").val()).select();
+        document.execCommand("copy");
+        alert("'.Yii::t('app','Token copied to clipboard').'")
+        $temp.remove();
+    });
+
+    $("#show").on("ifChanged", function(event){
+        if(this.checked){
+            $("#token").prop("type", "text");
+        } else {
+            $("#token").prop("type", "password");
+        }
+    });
+');
+
+?>
