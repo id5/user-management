@@ -66,18 +66,18 @@ $this->params['breadcrumbs'][] = $this->title;
 						'attribute'=>'superadmin',
 						'visible'=>Yii::$app->user->isSuperadmin,
 					],
-					// [
-					// 	'attribute'=>'username',
-					// 	'value'=>function(User $model){
-					// 			return Html::a($model->username,['view', 'id'=>$model->id],['data-pjax'=>0]);
-					// 		},
-					// 	'format'=>'raw',
-					// ],
 					[
-						'attribute'=>'email',
+						'attribute'=>'username',
+						'value'=>function(User $model){
+								return Html::a($model->username,['view', 'id'=>$model->id],['data-pjax'=>0]);
+							},
 						'format'=>'raw',
-						'visible'=>User::hasPermission('viewUserEmail'),
 					],
+					// [
+					// 	'attribute'=>'email',
+					// 	'format'=>'raw',
+					// 	'visible'=>User::hasPermission('viewUserEmail'),
+					// ],
 					[
 						'class'=>'webvimark\components\StatusColumn',
 						'attribute'=>'email_confirmed',
