@@ -45,7 +45,7 @@ class UserVisitLogSearch extends UserVisitLog
 				'pageSize' => Yii::$app->request->cookies->getValue('_grid_page_size', 20),
 			],
 			'sort'=>[
-				'defaultOrder'=>['id'=> SORT_DESC],
+				'defaultOrder'=>['visit_time'=> SORT_DESC],
 			],
 		]);
 
