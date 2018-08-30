@@ -65,7 +65,12 @@ $this->params['breadcrumbs'][] = $this->title;
 							},
 						'format'=>'raw',
 					),
-					'visit_time:datetime',
+					[
+						'attribute' => 'visit_time',
+						'value' => function ($data) {
+							return Yii::$app->formatter->asDatetime($data['visit_time'], 'dd/MM/yyyy HH:mm:ss');
+						}
+					],
 					[
 						'class' => 'yii\grid\ActionColumn',
 						'template'=>'{view}',
