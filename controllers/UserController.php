@@ -56,11 +56,14 @@ class UserController extends AdminDefaultController
 
 		if ( $model->load(Yii::$app->request->post()) && $model->save() )
 		{
-			Yii::$app->session->setFlash('success',Yii::t('app', 'Password changed'));
+			Yii::$app->session->setFlash('success',Yii::t('back', 'Password changed'));
 			return $this->redirect(['view',	'id' => $model->id]);
 		}
 
-		Yii::$app->session->setFlash('error',Yii::t('app', 'Failed to change password'));
+		if (Yii::$app->request->isPost)
+			Yii::$app->session->setFlash('error',Yii::t('back', 'Failed to change password'));
+
+		
 		return $this->renderIsAjax('changePassword', compact('model'));
 	}
 
