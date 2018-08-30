@@ -84,4 +84,6 @@ return [
     'Wrong format. Enter valid IPs separated by comma' => 'Formato incorreto. Insira endereços de IPs válidos e separados por vírgula',
     'Wrong password' => 'Senha incorreta',
     'You can not change own permissions' => 'Você não pode alterar suas próprias permissões',
+    'Password changed' => 'Senha alterada com sucesso',
+    'Failed to change password' => 'Falha ao alterar senha'
 ];
