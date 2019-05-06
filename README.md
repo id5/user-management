@@ -42,6 +42,16 @@ Configuration
 	'user' => [
 		'class' => 'webvimark\modules\UserManagement\components\UserConfig',
 
+		// Add regexp validation to passwords. Default pattern does not restrict user and can enter any set of characters.
+		// The example below allows user to enter :
+		// any set of characters
+		// (?=\S{8,}): of at least length 8
+		// (?=\S*[a-z]): containing at least one lowercase letter
+		// (?=\S*[A-Z]): and at least one uppercase letter
+		// (?=\S*[\d]): and at least one number
+		// $: anchored to the end of the string
+
+		//'passwordRegexp' => '^\S*(?=\S{8,})(?=\S*[a-z])(?=\S*[A-Z])(?=\S*[\d])\S*$',
 		// Comment this if you don't want to record user logins
 		'on afterLogin' => function($event) {
 				\webvimark\modules\UserManagement\models\UserVisitLog::newVisitor($event->identity->id);
