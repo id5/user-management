@@ -32,8 +32,9 @@ class ChangeOwnPasswordForm extends Model
 	public function rules()
 	{
 		return [
-			[['password', 'repeat_password'], 'required', 'string', 'min'=>8],
+			[['password', 'repeat_password'], 'required'],
 			[['password', 'repeat_password', 'current_password'], 'string', 'max'=>255],
+			[['password', 'repeat_password'], 'string', 'min'=>8],
 			[['password', 'repeat_password', 'current_password'], 'trim'],
 			['password', 'match', 'pattern' => Yii::$app->getModule('user-management')->passwordRegexp],
 
