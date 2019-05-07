@@ -31,7 +31,7 @@ class ChangeOwnPasswordForm extends Model
 	 */
 	public function rules()
 	{
-		return [
+		$rules = [
 			[['password', 'repeat_password'], 'required'],
 			[['password', 'repeat_password', 'current_password'], 'string', 'max'=>255],
 			[['password', 'repeat_password'], 'string', 'min'=>8],
@@ -43,6 +43,13 @@ class ChangeOwnPasswordForm extends Model
 			['current_password', 'required', 'except'=>'restoreViaEmail'],
 			['current_password', 'validateCurrentPassword', 'except'=>'restoreViaEmail'],
 		];
+
+
+		if (!empty(Yii::$app->getModule('user-management')->reCaptcha)) {
+			$rules[] = [['reCaptcha'], Yii::$app->getModule('user-management')->reCaptcha::className()];
+		}
+
+		return $rules;
 	}
 
 	public function attributeLabels()

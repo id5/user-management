@@ -20,13 +20,19 @@ class LoginForm extends Model
 	 */
 	public function rules()
 	{
-		return [
+		$rules = [
 			[['username', 'password'], 'required'],
 			['rememberMe', 'boolean'],
 			['password', 'validatePassword'],
 
 			['username', 'validateIP'],
 		];
+		
+		if (!empty(Yii::$app->getModule('user-management')->reCaptcha)) {
+			$rules[] = [['reCaptcha'], Yii::$app->getModule('user-management')->reCaptcha::className()];
+		}
+
+		return $rules;		
 	}
 
 	public function attributeLabels()

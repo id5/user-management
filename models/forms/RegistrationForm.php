@@ -51,6 +51,10 @@ class RegistrationForm extends Model
 			$rules[] = ['username', 'match', 'not'=>true, 'pattern'=>Yii::$app->getModule('user-management')->registrationBlackRegexp];
 		}
 
+		if (!empty(Yii::$app->getModule('user-management')->reCaptcha)) {
+			$rules[] = [['reCaptcha'], Yii::$app->getModule('user-management')->reCaptcha::className()];
+		}		
+
 		return $rules;
 	}
 

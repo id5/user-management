@@ -35,13 +35,19 @@ class ConfirmEmailForm extends Model
 	 */
 	public function rules()
 	{
-		return [
+		$rules = [
 			['email', 'required'],
 			['email', 'trim'],
 			['email', 'email'],
 
 			['email', 'validateEmailConfirmedUnique'],
 		];
+		
+		if (!empty(Yii::$app->getModule('user-management')->reCaptcha)) {
+			$rules[] = [['reCaptcha'], Yii::$app->getModule('user-management')->reCaptcha::className()];
+		}
+
+		return $rules;			
 	}
 
 	/**
