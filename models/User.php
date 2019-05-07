@@ -248,7 +248,7 @@ class User extends UserIdentity
 	*/
 	public function rules()
 	{
-		return [
+		$rules = [
 			['username', 'required'],
 			['username', 'unique'],
 			['username', 'trim'],
@@ -271,6 +271,12 @@ class User extends UserIdentity
 			['repeat_password', 'required', 'on'=>['newUser', 'changePassword']],
 			['repeat_password', 'compare', 'compareAttribute'=>'password'],
 		];
+
+		if (!empty(Yii::$app->getModule('user-management')->reCaptcha)) {
+			$rules[] = [['reCaptcha'], Yii::$app->getModule('user-management')->reCaptcha::className()];
+		}
+
+		return $rules;
 	}
 
 	/**

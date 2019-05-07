@@ -126,6 +126,12 @@ class UserManagementModule extends \yii\base\Module
 	public $passwordRegexp = '/^(.*)+$/';
 
 	/**
+	 * 	@var string
+	 * The Recaptcha custom validator className
+	 */
+	public $reCaptcha = '';
+
+	/**
 	 * How much attempts user can made to login or recover password in $attemptsTimeout seconds interval
 	 *
 	 * @var int
