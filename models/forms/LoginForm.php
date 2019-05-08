@@ -12,7 +12,7 @@ class LoginForm extends Model
 	public $username;
 	public $password;
 	public $rememberMe = false;
-
+	public $reCaptcha = '';
 	private $_user = false;
 
 	/**
