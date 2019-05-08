@@ -51,6 +51,11 @@ class User extends UserIdentity
 	public $repeat_password;
 
 	/**
+	 * @var string
+	 */
+	public $reCaptcha = '';
+		
+	/**
 	 * Store result in singleton to prevent multiple db requests with multiple calls
 	 *
 	 * @param bool $fromSingleton
