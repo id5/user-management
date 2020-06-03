@@ -110,4 +110,20 @@ class LoginForm extends Model
 
 		return $this->_user;
 	}
+
+	/**
+	 * Verify if login is first access from user
+	 * @return boolean
+	 */
+	public function verifyFirstAccess()
+	{
+		if($this->validate()){
+			$user = $this->getUser();
+			if(is_object($user) AND is_null($user->primeiro_acesso)){
+				return true;
+			}
+		}
+
+		return false;
+	}
 }

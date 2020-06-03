@@ -46,14 +46,42 @@ class AuthController extends BaseController
 		}
 
 		$model = new LoginForm();
+		$data = [];
 
-		if ( Yii::$app->request->isAjax AND $model->load(Yii::$app->request->post()) )
+		if(Yii::$app->request->post()){
+			$data = Yii::$app->request->post();
+		}
+
+		if ( Yii::$app->request->isAjax AND $model->load($data) )
 		{
 			Yii::$app->response->format = Response::FORMAT_JSON;
 			return ActiveForm::validate($model);
 		}
 
-		if ( $model->load(Yii::$app->request->post()) AND $model->login() )
+		if($model->load($data) AND $model->verifyFirstAccess()){
+			
+			if(isset($data['new_password']) && !empty($data['new_password'])){
+
+				$model->password = $data['new_password'];
+				$model->User->password_hash = Yii::$app->getSecurity()->generatePasswordHash($data['new_password']);
+				$model->User->primeiro_acesso = 1;
+				
+				if($model->User->save() AND $model->login()){
+					return $this->goBack();
+				}else{
+					Yii::$app->session->setFlash('error', Yii::t('app','Ops! Tivemos um problema, tente novamente mais tarde ou contate o administrador do sistema.'));
+					return $this->goHome();
+				}
+
+			}else{
+				Yii::$app->session->set('first_access', true);
+				Yii::$app->session->set('username', $model->username);
+				Yii::$app->session->set('password', $model->password);
+				return $this->goHome();
+			}
+		}
+
+		if ( $model->load($data) AND $model->login() )
 		{
 			return $this->goBack();
 		}
