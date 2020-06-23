@@ -21,7 +21,7 @@ class AuthController extends BaseController
 	/**
 	 * @var array
 	 */
-	public $freeAccessActions = ['login', 'logout', 'confirm-registration-email'];
+	public $freeAccessActions = ['login', 'logout', 'confirm-registration-email', 'password-recovery', 'password-recovery-receive'];
 
 	/**
 	 * @return array
@@ -242,6 +242,8 @@ class AuthController extends BaseController
 			return $this->goHome();
 		}
 
+		$this->layout = 'loginLayout';
+
 		$model = new PasswordRecoveryForm();
 
 		if ( Yii::$app->request->isAjax AND $model->load(Yii::$app->request->post()) )
@@ -256,15 +258,19 @@ class AuthController extends BaseController
 			return ActiveForm::validate($model, $validateAttributes);
 		}
 
-		if ( $model->load(Yii::$app->request->post()) AND $model->validate() )
+		if ( $model->load(Yii::$app->request->post()))
 		{
+			$user = User::findOne(['email' => $model->email]);
+
 			if ( $this->triggerModuleEvent(UserAuthEvent::BEFORE_PASSWORD_RECOVERY_REQUEST, ['model'=>$model]) )
 			{
-				if ( $model->sendEmail(false) )
+				if ( $model->sendEmail($user) )
 				{
 					if ( $this->triggerModuleEvent(UserAuthEvent::AFTER_PASSWORD_RECOVERY_REQUEST, ['model'=>$model]) )
 					{
-						return $this->renderIsAjax('passwordRecoverySuccess');
+						Yii::$app->session->setFlash('success', "Solicitação enviada! <br/><br/> Verifique seu E-mail para mais informações.");
+
+						return $this->redirect(['/user-management/auth/password-recovery']);
 					}
 				}
 				else
@@ -292,11 +298,15 @@ class AuthController extends BaseController
 			return $this->goHome();
 		}
 
+		$this->layout = 'loginLayout';
+
 		$user = User::findByConfirmationToken($token);
 
 		if ( !$user )
 		{
-			throw new NotFoundHttpException(UserManagementModule::t('front', 'Token not found. It may be expired. Try reset password once more'));
+			Yii::$app->session->setFlash('error', "Token não encontrado. Pode estar expirado. Tente redefinir a senha mais uma vez.");
+
+			return $this->redirect(['/user-management/auth/password-recovery']);
 		}
 
 		$model = new ChangeOwnPasswordForm([
@@ -312,9 +322,12 @@ class AuthController extends BaseController
 
 				if ( $this->triggerModuleEvent(UserAuthEvent::AFTER_PASSWORD_RECOVERY_COMPLETE, ['model'=>$model]) )
 				{
-					return $this->renderIsAjax('changeOwnPasswordSuccess');
+					Yii::$app->session->setFlash('success', "Senha atualizada com sucesso!");
+
+					return $this->redirect(['/user-management/auth/login']);
 				}
 			}
+			
 		}
 
 		return $this->renderIsAjax('changeOwnPassword', compact('model'));
