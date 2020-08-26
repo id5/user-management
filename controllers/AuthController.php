@@ -21,7 +21,7 @@ class AuthController extends BaseController
 	/**
 	 * @var array
 	 */
-	public $freeAccessActions = ['login', 'logout', 'confirm-registration-email', 'password-recovery', 'password-recovery-receive'];
+	public $freeAccessActions = ['login', 'logout', 'confirm-registration-email', 'password-recovery-receive'];
 
 	/**
 	 * @return array
@@ -237,50 +237,51 @@ class AuthController extends BaseController
 	 */
 	public function actionPasswordRecovery()
 	{
-		if ( !Yii::$app->user->isGuest )
+		$result = [
+			'check' => true,
+			'message' => 'Solicitação enviada! Verifique o E-mail vinculado a esse usuário para mais informações.'
+		];
+
+		$data = Yii::$app->request->post();
+
+		if(!isset($data['username']) || empty($data['username']))
 		{
-			return $this->goHome();
+			$result['check'] = false;
+			$result['message'] = 'Ops! Houve um problema na requisição, tente novamente mais tarde ou contate o(a) administrador(a) do sistema.';
+			echo json_encode($result);
+			exit;
 		}
 
-		$this->layout = 'loginLayout';
+		$user = User::findOne(['username' => $data['username']]);
+
+		if(is_null($user))
+		{
+			$result['check'] = false;
+			$result['message'] = 'Usuário não encontrado! Informe um usuário válido ou contate o(a) administrador(a) do sistema.';
+			echo json_encode($result);
+			exit;
+		}
+
+		if(is_null($user->email) || $user->email == '')
+		{
+			$result['check'] = false;
+			$result['message'] = 'O usuário informado não possui um E-mail cadastrado! Contate o(a) administrador(a) do sistema.';
+			echo json_encode($result);
+			exit;
+		}
 
 		$model = new PasswordRecoveryForm();
 
-		if ( Yii::$app->request->isAjax AND $model->load(Yii::$app->request->post()) )
+		if ( !$model->sendEmail($user) )
 		{
-			Yii::$app->response->format = Response::FORMAT_JSON;
-
-			// Ajax validation breaks captcha. See https://github.com/yiisoft/yii2/issues/6115
-			// Thanks to TomskDiver
-			$validateAttributes = $model->attributes;
-			unset($validateAttributes['captcha']);
-
-			return ActiveForm::validate($model, $validateAttributes);
+			$result['check'] = false;
+			$result['message'] = 'Ops! Houve um problema com o envio do email, tente novamente mais tarde ou contate o(a) administrador(a) do sistema.';
+			echo json_encode($result);
+			exit;
 		}
 
-		if ( $model->load(Yii::$app->request->post()))
-		{
-			$user = User::findOne(['email' => $model->email]);
-
-			if ( $this->triggerModuleEvent(UserAuthEvent::BEFORE_PASSWORD_RECOVERY_REQUEST, ['model'=>$model]) )
-			{
-				if ( $model->sendEmail($user) )
-				{
-					if ( $this->triggerModuleEvent(UserAuthEvent::AFTER_PASSWORD_RECOVERY_REQUEST, ['model'=>$model]) )
-					{
-						Yii::$app->session->setFlash('success', "Solicitação enviada! <br/><br/> Verifique seu E-mail para mais informações.");
-
-						return $this->redirect(['/user-management/auth/password-recovery']);
-					}
-				}
-				else
-				{
-					Yii::$app->session->setFlash('error', UserManagementModule::t('front', "Unable to send message for email provided"));
-				}
-			}
-		}
-
-		return $this->renderIsAjax('passwordRecovery', compact('model'));
+		echo json_encode($result);
+		exit;
 	}
 
 	/**
@@ -306,7 +307,7 @@ class AuthController extends BaseController
 		{
 			Yii::$app->session->setFlash('error', "Token não encontrado. Pode estar expirado. Tente redefinir a senha mais uma vez.");
 
-			return $this->redirect(['/user-management/auth/password-recovery']);
+			return $this->redirect(['/user-management/auth/login']);
 		}
 
 		$model = new ChangeOwnPasswordForm([
