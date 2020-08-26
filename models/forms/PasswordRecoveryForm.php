@@ -85,17 +85,18 @@ class PasswordRecoveryForm extends Model
 	 */
 	public function sendEmail($user)
 	{
-		if(is_null($user)){
-			return true;
-		}
-
 		$user->generateConfirmationToken();
 		$user->save(false);
 
-		return Yii::$app->mailer->compose(Yii::$app->getModule('user-management')->mailerOptions['passwordRecoveryFormViewFile'], ['user' => $user])
+		try{
+			return Yii::$app->mailer->compose(Yii::$app->getModule('user-management')->mailerOptions['passwordRecoveryFormViewFile'], ['user' => $user])
 			->setFrom(Yii::$app->getModule('user-management')->mailerOptions['from'])
 			->setTo($user->email)
 			->setSubject(UserManagementModule::t('front', 'Password reset for') . ' ' . Yii::$app->name)
 			->send();
+		}catch(\Swift_TransportException $exception){
+			return false;
+		}
+		
 	}
 }
