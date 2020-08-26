@@ -90,7 +90,7 @@ class PasswordRecoveryForm extends Model
 
 		try{
 			return Yii::$app->mailer->compose(Yii::$app->getModule('user-management')->mailerOptions['passwordRecoveryFormViewFile'], ['user' => $user])
-			->setFrom(Yii::$app->getModule('user-management')->mailerOptions['from'])
+			->setFrom('noreply@sococo.com.br')
 			->setTo($user->email)
 			->setSubject(UserManagementModule::t('front', 'Password reset for') . ' ' . Yii::$app->name)
 			->send();
