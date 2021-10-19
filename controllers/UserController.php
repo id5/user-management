@@ -39,6 +39,26 @@ class UserController extends AdminDefaultController
 		return $this->renderIsAjax('create', compact('model'));
 	}
 
+	public function actionUpdate($id)
+	{
+		$model = User::findOne($id);
+		
+		$post = Yii::$app->request->post();
+		if($post){
+			$model->load($post);
+			!empty($post['User']['password']) ? $model->setPassword($post['User']['password']) : '';
+			if($model->update()){
+				Yii::$app->session->setFlash('success', UserManagementModule::t('back', 'Password changed'));
+				return $this->redirect(['update', 'id' => $model->id]);
+			}else{
+				Yii::$app->session->setFlash('danger', 'Erro ao atualizar dados!');
+				return $this->redirect(['update', 'id' => $model->id]);
+			}
+		}
+
+		return $this->renderIsAjax('update', compact('model'));
+	}
+
 	/**
 	 * @param int $id User ID
 	 *
