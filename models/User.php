@@ -267,18 +267,18 @@ class User extends UserIdentity
 			['bind_to_ip', 'trim'],
 			['bind_to_ip', 'string', 'max' => 255],
 
-			['password', 'required', 'on'=>['newUser', 'changePassword']],
-			['password', 'string', 'max' => 255, 'on'=>['newUser', 'changePassword']],
-			['password', 'trim', 'on'=>['newUser', 'changePassword']],
+			['password', 'required', 'on'=>['newUser', 'changePassword', 'newInternalUser']],
+			['password', 'string', 'max' => 255, 'on'=>['newUser', 'changePassword', 'newInternalUser']],
+			['password', 'trim', 'on'=>['newUser', 'changePassword', 'newInternalUser']],
 			[['password', 'repeat_password'], 'string', 'min'=>8],
 			['password', 'match', 'pattern' => Yii::$app->getModule('user-management')->passwordRegexp],
 			
-			['repeat_password', 'required', 'on'=>['newUser', 'changePassword']],
+			['repeat_password', 'required', 'on'=>['newUser', 'changePassword', 'newInternalUser']],
 			['repeat_password', 'compare', 'compareAttribute'=>'password'],
 		];
 
 		if (!empty(Yii::$app->getModule('user-management')->reCaptcha)) {
-			$rules[] = [['reCaptcha'], Yii::$app->getModule('user-management')->reCaptcha::className(),'except'=>['newInternalUser']];
+			$rules[] = [['reCaptcha'], Yii::$app->getModule('user-management')->reCaptcha::className(), 'except'=>['newInternalUser']];
 		}
 
 		return $rules;
