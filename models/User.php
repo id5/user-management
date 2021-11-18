@@ -278,7 +278,7 @@ class User extends UserIdentity
 		];
 
 		if (!empty(Yii::$app->getModule('user-management')->reCaptcha)) {
-			$rules[] = [['reCaptcha'], Yii::$app->getModule('user-management')->reCaptcha::className()];
+			$rules[] = [['reCaptcha'], Yii::$app->getModule('user-management')->reCaptcha::className(),'except'=>['newInternalUser']];
 		}
 
 		return $rules;
