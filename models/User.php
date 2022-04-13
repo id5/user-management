@@ -262,6 +262,7 @@ class User extends UserIdentity
 
 			['email', 'email'],
 			['email', 'validateEmailConfirmedUnique'],
+			['email', 'required', 'on'=>['updateUser']],
 
 			['bind_to_ip', 'validateBindToIp'],
 			['bind_to_ip', 'trim'],
@@ -278,7 +279,7 @@ class User extends UserIdentity
 		];
 
 		if (!empty(Yii::$app->getModule('user-management')->reCaptcha)) {
-			$rules[] = [['reCaptcha'], Yii::$app->getModule('user-management')->reCaptcha::className(), 'except'=>['newInternalUser']];
+			$rules[] = [['reCaptcha'], Yii::$app->getModule('user-management')->reCaptcha::className(), 'except'=>['newInternalUser', 'updateUser', 'changePassword']];
 		}
 
 		return $rules;
