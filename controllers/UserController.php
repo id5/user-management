@@ -37,6 +37,24 @@ class UserController extends AdminDefaultController
 		return $this->renderIsAjax('create', compact('model'));
 	}
 
+	public function actionUpdate($id)
+	{	
+		$model = $this->findModel($id);
+		
+		if(!$model->isNewRecord){
+			$model->scenario = 'updateUser';
+		}
+
+		if ( $model->load(Yii::$app->request->post()) AND $model->save())
+		{	
+			$redirect = $this->getRedirectPage('update', $model);
+
+			return $redirect === false ? '' : $this->redirect($redirect);
+		}
+
+		return $this->renderIsAjax('update', compact('model'));
+	}
+
 	/**
 	 * @param int $id User ID
 	 *
