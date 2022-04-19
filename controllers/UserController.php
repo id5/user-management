@@ -27,7 +27,7 @@ class UserController extends AdminDefaultController
 	 */
 	public function actionCreate()
 	{
-		$model = new User(['scenario'=>'newUser']);
+		$model = new User(['scenario'=>'newInternalUser']);
 
 		if ( $model->load(Yii::$app->request->post()) && $model->save() )
 		{
