@@ -258,7 +258,7 @@ class User extends UserIdentity
 			['username', 'unique'],
 			['username', 'trim'],
 
-			[['status', 'email_confirmed'], 'integer'],
+			[['status', 'email_confirmed', 'trocar_senha'], 'integer'],
 
 			['email', 'email'],
 			['email', 'validateEmailConfirmedUnique'],
