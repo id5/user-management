@@ -48,7 +48,7 @@ class UserController extends AdminDefaultController
 			$model->load($post);
 			!empty($post['User']['password']) ? $model->setPassword($post['User']['password']) : '';
 			if($model->update()){
-				Yii::$app->session->setFlash('success', UserManagementModule::t('back', 'Password changed'));
+				Yii::$app->session->setFlash('success', UserManagementModule::t('back', 'Dados atualizados com sucesso!'));
 				return $this->redirect(['update', 'id' => $model->id]);
 			}else{
 				Yii::$app->session->setFlash('danger', 'Erro ao atualizar dados!');
