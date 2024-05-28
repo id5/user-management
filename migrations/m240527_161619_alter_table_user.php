@@ -2,7 +2,7 @@
 
 use yii\db\Migration;
 
-class m240527_161618_alter_table_user extends Migration
+class m240527_161619_alter_table_user extends Migration
 {
     
     public function safeUp()
